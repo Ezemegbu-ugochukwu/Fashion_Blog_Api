@@ -6,5 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PostDto {
-    private String postContent;
+     private String productName;
+     private double price;
+     private String content;
+     private String category;
 }

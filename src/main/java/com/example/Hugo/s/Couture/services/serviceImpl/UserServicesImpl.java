@@ -10,10 +10,8 @@ import com.example.Hugo.s.Couture.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class UserServicesImpl implements UserServices {
@@ -37,6 +35,7 @@ public class UserServicesImpl implements UserServices {
             user.setEmail(registrationDto.getEmail());
             user.setUsername(registrationDto.getUsername());
             user.setRole(registrationDto.getRole());
+            user.setPassword(registrationDto.getPassword());
             userRepository.save(user);
         }else {
             throw new UserRegistrationException("User with email "+user.getEmail()+" or User with Username "+user.getUsername()+ " already exists");
@@ -65,5 +64,14 @@ public class UserServicesImpl implements UserServices {
         user.setEmail(registrationDto.getEmail());
         userRepository.save(user);
         return user;
+    }
+
+    @Override
+    public void deleteUser(long id) {
+        User user = userRepository.getById(id);
+        if (user == null){
+            throw new InvalidRequestException("User not found");
+        }
+        userRepository.delete(user);
     }
 }

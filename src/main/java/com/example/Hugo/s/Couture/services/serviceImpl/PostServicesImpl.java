@@ -7,28 +7,38 @@ import com.example.Hugo.s.Couture.model.User;
 import com.example.Hugo.s.Couture.repositories.PostRepository;
 import com.example.Hugo.s.Couture.repositories.UserRepository;
 import com.example.Hugo.s.Couture.services.PostServices;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.Date;
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class PostServicesImpl implements PostServices {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private ModelMapper mapper;
 
-    public PostServicesImpl(PostRepository postRepository, UserRepository userRepository) {
+    public PostServicesImpl(PostRepository postRepository, UserRepository userRepository, ModelMapper mapper) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.mapper = mapper;
     }
 
+    @Transactional
     @Override
     public Post makeNewPost(long uid, PostDto postdto) {
-        User user = userRepository.getById(uid);
+        User user = userRepository.findById(uid).orElseThrow(() -> new InvalidUserException("user not found"));
         Post post = new Post();
-        post.setPostContent(postdto.getPostContent());
+        post.setProductName(postdto.getProductName());
+        post.setPrice(postdto.getPrice());
+        post.setContent(postdto.getContent());
+        post.setCategory(postdto.getCategory());
+        post.setDatePosted(LocalDateTime.now());
         post.setUser(user);
+//        user.getListOfPosts().add(post);
+//        userRepository.save(user);
         postRepository.save(post);
         return post;
 
@@ -38,7 +48,10 @@ public class PostServicesImpl implements PostServices {
     public Post editPost(long pid, long uid, PostDto postdto) {
        Post post = postRepository.getById(pid);
        if (post.getUser().getId() == uid){
-           post.setPostContent(postdto.getPostContent());
+           post.setProductName(postdto.getProductName());
+           post.setPrice(postdto.getPrice());
+           post.setContent(postdto.getContent());
+           post.setCategory(postdto.getCategory());
            postRepository.save(post);
        }
        else {
@@ -61,5 +74,12 @@ public class PostServicesImpl implements PostServices {
             throw new InvalidUserException("Invalid User");
         }
         return post;
+    }
+
+    @Override
+    public List<Post> getUserPosts(long uid) {
+        User user = userRepository.findById(uid).orElseThrow(() -> new InvalidUserException("User not found"));
+        return user.getListOfPosts();
+
     }
 }

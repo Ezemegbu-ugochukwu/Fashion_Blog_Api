@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,16 +23,13 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
     private String commentContent;
-    private Date dateCommented;
-    private Time timeCommented;
-
-    @ManyToOne
-    private Post post;
+    private LocalDateTime timePosted;
+//    private Time timeCommented;
+//
+//    @ManyToOne
+//    private Post post;
 
     @ManyToOne
     private User user;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Like> likes = new ArrayList<>();
 
 }

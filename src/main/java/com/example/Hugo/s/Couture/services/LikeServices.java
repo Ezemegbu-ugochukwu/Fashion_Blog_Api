@@ -1,11 +1,16 @@
 package com.example.Hugo.s.Couture.services;
 
+import com.example.Hugo.s.Couture.model.Like;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public interface LikeServices {
-    long likePost (long uid, long pid);
-    long likeComment (long uid, long cid);
-    long getAllCommentLikes (long cid);
-    long getAllPostLikes(long pid);
+    void likePost (long uid, long pid);
+   String unlikePost(long uid, long pid);
+//    void likeComment (long uid, long cid);
+//    void unlikeComment (long uid, long cid)
+//    int getAllCommentLikes (long cid);
+    int getAllPostLikes(long pid);
 }

@@ -12,5 +12,6 @@ public interface PostServices {
     Post editPost(long pid, long uid, PostDto postdto);
     List<Post> getAllPost();
     Post deletePost(long pid, long uid);
+    List<Post> getUserPosts(long uid);
 
 }

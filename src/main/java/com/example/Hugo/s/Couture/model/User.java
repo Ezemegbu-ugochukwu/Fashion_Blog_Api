@@ -11,6 +11,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,9 +36,9 @@ public class User implements Serializable {
     @Size(min = 4, message = "Password should contain at least 4 characters")
     private String password;
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Post> listOfPosts;
+    private List<Post> listOfPosts = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Comment> listOfComments;
+    private List<Comment> listOfComments = new ArrayList<>();
 
 }

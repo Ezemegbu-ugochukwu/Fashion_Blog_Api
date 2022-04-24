@@ -13,4 +13,5 @@ public interface UserServices {
     User registerNewUser(RegistrationDto registrationDto);
     User loginUser(LoginDto loginDto);
     User editUser(long id, RegistrationDto registrationDto);
+    void deleteUser(long id);
 }

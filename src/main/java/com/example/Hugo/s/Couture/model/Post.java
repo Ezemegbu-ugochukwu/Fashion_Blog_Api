@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,8 +22,12 @@ public class Post {
     private Long postId;
 
     @NotBlank
-    private String postContent;
-//    private Date datePosted;
+    private String productName;
+    private double price;
+    private String content;
+    private String category;
+
+   private LocalDateTime datePosted;
 //    private Time timePosted;
 
     @JsonIgnore
@@ -33,6 +38,10 @@ public class Post {
     @OneToMany(fetch = FetchType.LAZY)
     private List<Like> likes = new ArrayList<>();
 
-    private int noOfComments;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+
+//    private int noOfComments = this.getComments().size();
+//    private int noOfLikes = this.getLikes().size();
 
 }
