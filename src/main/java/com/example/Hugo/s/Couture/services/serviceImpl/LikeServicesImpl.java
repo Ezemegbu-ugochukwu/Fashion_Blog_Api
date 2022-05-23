@@ -11,16 +11,21 @@ import com.example.Hugo.s.Couture.repositories.PostRepository;
 import com.example.Hugo.s.Couture.repositories.UserRepository;
 import com.example.Hugo.s.Couture.services.LikeServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Component
 @Service
 public class LikeServicesImpl implements LikeServices {
    private final LikeRepository likeRepository;
    private final CommentRepository commentRepository;
    private final PostRepository postRepository;
    private final UserRepository userRepository;
+   @Value("${mailgun.username}")
+   private String mailgunUsername;
 
     @Autowired
     public LikeServicesImpl(LikeRepository likeRepository, CommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository) {

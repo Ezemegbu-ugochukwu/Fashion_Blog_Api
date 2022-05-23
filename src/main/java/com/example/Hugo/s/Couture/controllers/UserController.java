@@ -7,6 +7,8 @@ import com.example.Hugo.s.Couture.model.User;
 import com.example.Hugo.s.Couture.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,31 +25,28 @@ public class UserController {
     }
     @GetMapping("/all")
     @Cacheable(value = "userDetails")
-    public List<User> getAllUsers() {
+    public ResponseEntity<List<User>>getAllUsers() {
         return userServices.getAllUsers();
     }
 
     @PostMapping("/register")
-    public User registerNewUser(@RequestBody RegistrationDto registrationDto){
+    public ResponseEntity<RegistrationDto> registerNewUser(@RequestBody RegistrationDto registrationDto){
         return userServices.registerNewUser(registrationDto);
     }
     @PostMapping("/login")
-    public User userLogin(@Valid @RequestBody LoginDto loginDto){
-        User user = userServices.loginUser(loginDto);
-        if (user == null){
-           throw new InvalidUserException("Invalid email");
-        }else {
-            System.out.println("User Successfully logged in");
-        }
-        return user;
+    public ResponseEntity<User> userLogin(@Valid @RequestBody LoginDto loginDto){
+        return userServices.loginUser(loginDto);
     }
     @PutMapping("/edit/{id}")
-    public User editUser(@Valid @PathVariable long id, @RequestBody RegistrationDto registrationDto){
+    public ResponseEntity<RegistrationDto> editUser(@Valid @PathVariable long id, @RequestBody RegistrationDto registrationDto){
         return userServices.editUser(id, registrationDto);
     }
     @DeleteMapping("/delete/{id}")
-    public void deleteUser(@PathVariable long id){
+    public ResponseEntity<String> deleteUser(@PathVariable long id){
+
         userServices.deleteUser(id);
+
+        return new ResponseEntity<String>("User deleted successfully", HttpStatus.OK);
     }
 
 }

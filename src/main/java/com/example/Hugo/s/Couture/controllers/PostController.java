@@ -27,12 +27,12 @@ public class PostController {
     }
 
     @PostMapping("/addNewPost")
-    public ResponseEntity<Post> addNewPost(@Valid @RequestParam long uid, @RequestBody PostDto postdto){
-     return new ResponseEntity<>(postServices.makeNewPost(uid, postdto), HttpStatus.CREATED);
+    public ResponseEntity<PostDto> addNewPost(@Valid @RequestParam long uid, @RequestBody PostDto postdto){
+     return postServices.makeNewPost(uid, postdto);
     }
 
     @PutMapping("/editPost/{pid}")
-    public  ResponseEntity<Post> editPost(@Valid @RequestParam long uid, @PathVariable long pid, @RequestBody PostDto postdto){
+    public  ResponseEntity<PostDto> editPost(@Valid @RequestParam long uid, @PathVariable long pid, @RequestBody PostDto postdto){
         return new ResponseEntity<>(postServices.editPost(pid,uid,postdto), HttpStatus.OK);
     }
 

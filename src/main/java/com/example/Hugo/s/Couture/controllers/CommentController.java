@@ -27,11 +27,11 @@ public class CommentController {
         return ResponseEntity.ok(commentServices.listOfPostComments(pid));
     }
     @PostMapping("/makeNewComment/{pid}")
-    public ResponseEntity<Comment> commentOnPost(@Valid @RequestParam long uid, @RequestBody CommentDto commentDto, @PathVariable long pid){
+    public ResponseEntity<CommentDto> commentOnPost(@Valid @RequestParam long uid, @RequestBody CommentDto commentDto, @PathVariable long pid){
      return new ResponseEntity<>(commentServices.newComment(uid, pid, commentDto), HttpStatus.CREATED);
     }
     @PutMapping("/editComment/{cid}")
-    public ResponseEntity<Comment> editComment(@Valid @RequestParam long uid, @RequestBody CommentDto commentDto, @PathVariable long cid){
+    public ResponseEntity<Comment > editComment(@Valid @RequestParam long uid, @RequestBody CommentDto commentDto, @PathVariable long cid){
         return new ResponseEntity<>(commentServices.editComment(cid,uid,commentDto), HttpStatus.OK);
     }
     @DeleteMapping("/deleteComment/{cid}")

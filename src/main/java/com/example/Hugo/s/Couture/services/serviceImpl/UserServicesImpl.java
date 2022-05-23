@@ -7,71 +7,92 @@ import com.example.Hugo.s.Couture.exceptions.UserRegistrationException;
 import com.example.Hugo.s.Couture.model.User;
 import com.example.Hugo.s.Couture.repositories.UserRepository;
 import com.example.Hugo.s.Couture.services.UserServices;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
-
+@Component
 @Service
 public class UserServicesImpl implements UserServices {
     private final UserRepository userRepository;
+    private ModelMapper mapper;
 
     @Autowired
-    public UserServicesImpl(UserRepository userRepository) {
+    public UserServicesImpl(UserRepository userRepository, ModelMapper mapper) {
         this.userRepository = userRepository;
+        this.mapper = mapper;
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public ResponseEntity<List<User>> getAllUsers() {
+        return new ResponseEntity<>(userRepository.findAll(), HttpStatus.OK);
     }
 
     @Override
-    public User registerNewUser(RegistrationDto registrationDto) {
-        User user  = userRepository.findUserByEmailOrUsername(registrationDto.getEmail(), registrationDto.getUsername());
-        if (user == null){
-            user = new User();
-            user.setEmail(registrationDto.getEmail());
-            user.setUsername(registrationDto.getUsername());
-            user.setRole(registrationDto.getRole());
-            user.setPassword(registrationDto.getPassword());
-            userRepository.save(user);
+    public ResponseEntity<RegistrationDto> registerNewUser(RegistrationDto registrationDto) {
+
+       Optional<User> selectedUser  = userRepository.findUserByEmailOrUsername(registrationDto.getEmail(), registrationDto.getUsername());
+       if (selectedUser.isPresent())
+           throw new UserRegistrationException("user already exists");
+            User user =  mapToEntity(registrationDto);
+           User newUser = userRepository.save(user);
+           return new ResponseEntity<>(mapToDto(newUser), HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<User> loginUser(LoginDto loginDto) {
+        Optional<User> user = userRepository.findByEmail(loginDto.getEmail());
+        if (user.isPresent()){
+//        throw new InvalidRequestException("Invalid Email/password");
+            return new ResponseEntity<>(user.get(),HttpStatus.ACCEPTED);
         }else {
-            throw new UserRegistrationException("User with email "+user.getEmail()+" or User with Username "+user.getUsername()+ " already exists");
+            throw new InvalidRequestException("Invalid Email/password");
         }
-        return user;
+
     }
 
     @Override
-    public User loginUser(LoginDto loginDto) {
-        User user = userRepository.findByEmail(loginDto.getEmail());
-        if (user == null){
-        throw new InvalidRequestException("Invalid Email/password");
-        }
-        return user;
-    }
+    public ResponseEntity<RegistrationDto> editUser(long id, RegistrationDto registrationDto) {
+       Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()){
+//            throw new InvalidRequestException("User not found");
 
-    @Override
-    public User editUser(long id, RegistrationDto registrationDto) {
-        User user = userRepository.getById(id);
-        if (user == null){
+        user.get().setRole(registrationDto.getRole());
+        user.get().setUsername(registrationDto.getUsername());
+        user.get().setPassword(registrationDto.getPassword());
+        user.get().setEmail(registrationDto.getEmail());
+            User editUserDetails = userRepository.save(user.get());
+            RegistrationDto editDetails = mapToDto(editUserDetails);
+            return new ResponseEntity<>(editDetails, HttpStatus.OK);
+        }else {
             throw new InvalidRequestException("User not found");
         }
-        user.setRole(registrationDto.getRole());
-        user.setUsername(registrationDto.getUsername());
-        user.setPassword(registrationDto.getPassword());
-        user.setEmail(registrationDto.getEmail());
-        userRepository.save(user);
-        return user;
+
     }
 
     @Override
     public void deleteUser(long id) {
-        User user = userRepository.getById(id);
-        if (user == null){
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()){
+            userRepository.delete(user.get());
+//            throw new InvalidRequestException("User not found");
+        }else {
             throw new InvalidRequestException("User not found");
         }
-        userRepository.delete(user);
+
+    }
+    public RegistrationDto mapToDto(User user){
+        RegistrationDto registrationDto = mapper.map(user, RegistrationDto.class);
+        return registrationDto;
+    }
+    public User mapToEntity(RegistrationDto registrationDto){
+        User user = mapper.map(registrationDto, User.class);
+        return user;
     }
 }

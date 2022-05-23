@@ -2,8 +2,7 @@ package com.example.Hugo.s.Couture.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -15,6 +14,9 @@ import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 public class Post {
     @Id
@@ -26,8 +28,7 @@ public class Post {
     private double price;
     private String content;
     private String category;
-
-   private LocalDateTime datePosted;
+    private LocalDateTime datePosted;
 //    private Time timePosted;
 
     @JsonIgnore

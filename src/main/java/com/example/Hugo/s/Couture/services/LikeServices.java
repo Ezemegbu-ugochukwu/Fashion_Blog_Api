@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+
 public interface LikeServices {
     void likePost (long uid, long pid);
    String unlikePost(long uid, long pid);

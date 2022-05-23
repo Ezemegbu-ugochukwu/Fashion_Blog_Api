@@ -1,10 +1,12 @@
 package com.example.Hugo.s.Couture.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class RegistrationDto {
     private String username;
     private String email;
